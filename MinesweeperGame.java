@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class MinesweeperGame {
     private static final int BOARD_SIZE = 10; // Change the board size as needed
-    private static final int NUM_MINES = 10; // Change the number of mines as needed
+    private static final int NUM_MINES = 20; // Change the number of mines as needed
 
     private char[][] board;
     private boolean[][] revealed;
