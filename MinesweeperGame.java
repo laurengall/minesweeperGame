@@ -13,6 +13,10 @@ public class MinesweeperGame {
     public MinesweeperGame() {
         board = new char[BOARD_SIZE][BOARD_SIZE];
         revealed = new boolean[BOARD_SIZE][BOARD_SIZE];
+        revealed[4][4] = true; 
+        revealed[4][5] = true; 
+        revealed[5][4] = true; 
+        revealed[5][5] = true; 
         flagged = new boolean[BOARD_SIZE][BOARD_SIZE];
         numMinesRemaining = NUM_MINES;
 
@@ -37,8 +41,15 @@ public class MinesweeperGame {
       for (int i = 0; i < 20; i++){
         Random rand = new Random(); 
         int r = rand.nextInt(BOARD_SIZE -1); 
-        int c = rand.nextInt(BOARD_SIZE -1); 
-        board[r][c] = 'X'; 
+        int c = rand.nextInt(BOARD_SIZE -1);  
+        if (r == 4 || r == 5){
+          if (c == 4 || c == 5){
+            board[r-3][c+3] = 'X'; 
+          }
+        }
+        else {
+          board[r][c] = 'X'; 
+        }
       }
     }
 
@@ -63,12 +74,23 @@ public class MinesweeperGame {
 
     public void revealCell(int row, int col) {
         revealed[row][col] = true; 
+      if(row != 0 && row != 9 && col != 0 && col != 9){
+          if (board[row--][col] != 'X' && board[row++][col]               != 'X' && board[row][col++] != 'X' &&                       board[row][col--] != 'X'){
+        revealed[row--][col] = true; 
+        revealed[row++][col] = true; 
+        revealed[row][col--] = true; 
+        revealed[row][col++] = true; 
+      }
+        }
+      
     }
 
     public void flagCell(int row, int col) {
       flagged[row][col] = true;
       if (board[row][col] == 'X'){
         numMinesRemaining--;
+      } else {
+        System.out.println("Hmm..."); 
       }
     }
 
@@ -80,10 +102,15 @@ public class MinesweeperGame {
         // Print the current board
         printBoard();
 
+
+      System.out.println("\nNumber of unflagged mines: " + numMinesRemaining);
+      
         // Prompt the user for input
-        System.out.print("Enter row and column (e.g., 0 0): ");
-        int row = scanner.nextInt();
-        int col = scanner.nextInt();
+      
+        System.out.print("Enter row and column (e.g., 1 1): ");
+       
+        int row = scanner.nextInt() -1;
+        int col = scanner.nextInt() -1;
 
         // Process user input
         if (isValidCell(row, col)) {
@@ -111,13 +138,18 @@ public class MinesweeperGame {
     }
    }
 private void printBoard() {
-    System.out.println("  0 1 2 3 4 5 6 7 8 9");
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        System.out.print(row + " ");
+    System.out.println("   1 2 3 4 5 6 7 8 9 10");
+    for (int row = 1; row < BOARD_SIZE +1; row++) {
+      if (row < 10){
+        System.out.print(row + "  ");
+      } else {
+        System.out.print(row +" ");
+      }
+        
         for (int col = 0; col < BOARD_SIZE; col++) {
-            if (revealed[row][col]) {
-                System.out.print(board[row][col] + " ");
-            } else if (flagged[row][col]) {
+            if (revealed[row -1][col]) {
+                System.out.print(board[row -1][col] + " ");
+            } else if (flagged[row-1][col]) {
                 System.out.print("F ");
             } else {
                 System.out.print("- ");
@@ -143,8 +175,11 @@ private String getAction(Scanner scanner) {
 private boolean isWinningCondition() {
     // TODO: Implement the isValidCell method
     // Check if all non-mine cells have been revealed
-  if(numMinesRemaining == 0){
-    return true;
+  
+ if (numMinesRemaining == 0){
+    
+      return true;
+    
   }
     return false; 
 }
