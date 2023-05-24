@@ -94,6 +94,16 @@ public class MinesweeperGame {
       }
     }
 
+    public void hideCell(){
+      for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board[0].length; j++){
+              if(board[i][j] == 'X'){
+                 revealed[i][j] = false; 
+          }
+        }
+      }
+    }
+
    public void playGame() {
     Scanner scanner = new Scanner(System.in);
     boolean gameOver = false;
@@ -101,9 +111,7 @@ public class MinesweeperGame {
     while (!gameOver) {
         // Print the current board
         printBoard();
-
-
-      System.out.println("\nNumber of unflagged mines: " + numMinesRemaining);
+      
       
         // Prompt the user for input
       
@@ -113,46 +121,59 @@ public class MinesweeperGame {
         int col = scanner.nextInt() -1;
 
         // Process user input
+        hideCell();
         if (isValidCell(row, col)) {
             String action = getAction(scanner);
             if (action.equalsIgnoreCase("R")) {
                 revealCell(row, col);
                 if (board[row][col] == 'X') {
                     gameOver = true;
-                    System.out.println("Game Over! You hit a mine.");
+                    System.out.println("\uD83D\uDCA3");
+                    System.out.println("Game Over! You hit a mine.");  
                 }
            } else if (action.equalsIgnoreCase("F")) {
                 flagCell(row, col);
             } else {
                 System.out.println("Invalid action. Please enter 'R' to reveal or 'F' to flag.");
             }
-        } else {
+        } 
+          else if (row == -1 && col == -1){
+          for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board[0].length; j++){
+              if(board[i][j] == 'X'){
+                revealCell(i, j);
+              }
+            }
+          } 
+        }
+   
+        else {
             System.out.println("Invalid cell. Please enter valid row and column values.");
         }
-
         // Check for game over conditions
         if (isWinningCondition()) {
             gameOver = true;
             System.out.println("Congratulations! You win!");
-        }
+      }
     }
-   }
-private void printBoard() {
-    System.out.println("   1 2 3 4 5 6 7 8 9 10");
+  }
+
+  private void printBoard() {
+    System.out.println("    1 2 3 4 5 6 7 8 9 10");
     for (int row = 1; row < BOARD_SIZE +1; row++) {
       if (row < 10){
         System.out.print(row + "  ");
       } else {
-        System.out.print(row +" ");
+        System.out.print(row + " ");
       }
         
         for (int col = 0; col < BOARD_SIZE; col++) {
             if (revealed[row -1][col]) {
-                System.out.print(board[row -1][col] + " ");
+                System.out.print(" " + board[row -1][col]);
             } else if (flagged[row-1][col]) {
-                System.out.print("F ");
+                System.out.print("\uD83D\uDEA9"); ;
             } else {
-                System.out.print("- ");
+                System.out.print(" \u25AB");
             }
         }
         System.out.println();
@@ -161,9 +182,9 @@ private void printBoard() {
 
 private boolean isValidCell(int row, int col) {
     boolean valid = false;
-      if (row < BOARD_SIZE && col < BOARD_SIZE && row >= 0 && col >= 0){
+      if (row < BOARD_SIZE && col < BOARD_SIZE && row >= 0 && col >= 0) {
     valid = true; 
-  }
+  } 
     return valid; 
 }
 
@@ -175,14 +196,9 @@ private String getAction(Scanner scanner) {
 private boolean isWinningCondition() {
     // TODO: Implement the isValidCell method
     // Check if all non-mine cells have been revealed
-  
- if (numMinesRemaining == 0){
-    
+ if (numMinesRemaining == 0) {   
       return true;
-    
-  }
+    }
     return false; 
-}
-
-    
+  }
 }
